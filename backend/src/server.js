@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import { connectDB } from './config/db.js';
 import { router } from './routes/notesRoutes.js';
+import { rateLimiter } from './middleware/rateLimiter.js';
 
 const PORT = process.env.PORT;
 
@@ -10,6 +11,7 @@ const app = express();
 // middleware
 // initial
 app.use(express.json());
+app.use(rateLimiter);
 // logger
 app.use((req, res, next) => {
   console.log(req.path, req.method);
