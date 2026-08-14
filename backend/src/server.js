@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import cors from 'cors';
 import { connectDB } from './config/db.js';
 import { router } from './routes/notesRoutes.js';
 import { rateLimiter } from './middleware/rateLimiter.js';
@@ -10,6 +11,7 @@ const app = express();
 
 // middleware
 // initial
+app.use(cors());
 app.use(express.json());
 app.use(rateLimiter);
 // logger
