@@ -4,14 +4,19 @@ import cors from 'cors';
 import { connectDB } from './config/db.js';
 import { router } from './routes/notesRoutes.js';
 import { rateLimiter } from './middleware/rateLimiter.js';
+import path from 'path';
 
 const PORT = process.env.PORT;
 
 const app = express();
+const __dirname = path.resolve();
 
 // middleware
 // initial
-app.use(cors());
+if (process.env.NODE_ENV !== 'production') {
+  app.use(cors());
+}
+
 app.use(express.json());
 app.use(rateLimiter);
 // logger
@@ -21,6 +26,14 @@ app.use((req, res, next) => {
 });
 // mount router
 app.use('/api/notes', router);
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+  app.get('/*splat', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend', 'dist', 'index.html'));
+  });
+}
 
 async function startServer() {
   try {
